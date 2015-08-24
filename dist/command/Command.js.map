@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/main/js/command/Command.js"],"names":[],"mappings":"AAAA,YAAY,CAAC;;;;;;;;;;;;8BAES,oBAAoB;;IAE7B,OAAO;YAAP,OAAO;;WAAP,OAAO;0BAAP,OAAO;;+BAAP,OAAO;;;SAAP,OAAO","file":"Command.js","sourcesContent":["'use strict';\n\nimport {Message} from '../message/Message';\n\nexport class Command extends Message {\n\n}\n"]}

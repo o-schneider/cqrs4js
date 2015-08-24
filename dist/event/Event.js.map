@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/main/js/event/Event.js"],"names":[],"mappings":"AAAA,YAAY,CAAC;;;;;;;;;;;;8BAES,oBAAoB;;IAE7B,KAAK;YAAL,KAAK;;WAAL,KAAK;0BAAL,KAAK;;+BAAL,KAAK;;;SAAL,KAAK","file":"Event.js","sourcesContent":["'use strict';\n\nimport {Message} from '../message/Message';\n\nexport class Event extends Message {\n\n}\n"]}

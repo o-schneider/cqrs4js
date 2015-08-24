@@ -1,0 +1,25 @@
+{
+  "name": "cqrs4js",
+  "version": "0.0.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cluelessjoe/cqrs4js"
+  },
+  "scripts": {
+    "build": "./node_modules/.bin/babel -s true --out-dir ./dist src/main/js",
+    "test": "./node_modules/.bin/mocha --check-leaks --throw-deprecation --growl --bail --recursive --compilers js:babel/register src/test/js"
+  },
+  "main": "./dist/cqrs4js.js",
+  "dependencies": {
+    "node-uuid": "^1.4.3",
+    "lodash": "^3.10.0"
+  },
+  "devDependencies": {
+    "babel": "^5.6.5",
+    "babelify": "^5.0.4",
+    "browserify": "^11.0.1",
+    "mocha": "^2.2.4",
+    "node-notifier": "^4.1.2",
+    "should": "^5.2.0"
+  }
+}

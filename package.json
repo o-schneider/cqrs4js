@@ -1,9 +1,9 @@
 {
   "name": "cqrs4js",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cluelessjoe/cqrs4js"
+    "url": "https://github.com/HeroesDesk/cqrs4js"
   },
   "scripts": {
     "build": "./node_modules/.bin/babel -s true --out-dir ./dist src/main/js",

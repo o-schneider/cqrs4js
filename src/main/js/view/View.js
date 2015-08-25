@@ -1,21 +1,24 @@
 'use strict';
 
 import {EventEmitter} from 'events';
-import {check} from '../check/check';
+import {check} from '../utils/check';
+import {ObjectUtils} from '../utils/ObjectUtils'
 import _ from 'lodash';
 
 const log = false;
 
 export class View {
 
-  constructor(eventBus, ...listenedEventTypesAndActions) {
+  constructor(eventBus, initialState, ...listenedEventTypesAndActions) {
     check.notNull({'eventBus': eventBus});
     check.true("listenedEventTypesAndActions should contain at least one type and action", function () {
       return listenedEventTypesAndActions != null && listenedEventTypesAndActions.length != 0;
     });
 
-    const view = this;
-    _.forEach(listenedEventTypesAndActions, (actionAndType) => {
+    this.messageEmitter = new EventEmitter();
+    let state = ObjectUtils.freezeDeep(initialState);
+
+    listenedEventTypesAndActions.forEach((actionAndType) => {
       const type = actionAndType.type;
       const action = actionAndType.action;
 
@@ -25,18 +28,16 @@ export class View {
         return typeof type === "string" && action instanceof Function
       });
 
-      eventBus.subscribe(type, (message)=> {
-        action.call(null, message, view);
-        view.changed();
+      eventBus.subscribe(type, (event) => {
+        state = ObjectUtils.freezeDeep(action.call(null, event, _.cloneDeep(state)));
+        this.messageEmitter.emit('change', state)
       });
     });
-    this.messageEmitter = new EventEmitter();
+
   }
 
-  changed() { this.messageEmitter.emit('change'); }
-
   watch(cbk) {
-    this.messageEmitter.on('change', cbk);
+    this.messageEmitter.on('change', (state) => cbk.call(null, state) );
     return () => this.messageEmitter.removeListener('change', cbk);
   }
 }

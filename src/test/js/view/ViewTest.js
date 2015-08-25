@@ -67,7 +67,7 @@ describe('View', function () {
     }
     const collector = new Array();
     const fakeEventBus = new FakeEventBus(collector);
-    new View(fakeEventBus,
+    new View(fakeEventBus, {},
       {
         'type': 'eventType1',
         'action': function () {
@@ -86,9 +86,9 @@ describe('View', function () {
         this.collector.push({messageType, callback});
       }
     }
-    const collector = new Array();
+    const collector = [];
     const fakeEventBus = new FakeEventBus(collector);
-    new View(fakeEventBus,
+    new View(fakeEventBus, {},
       {
         'type': 'eventType1',
         'action': function () {
@@ -107,7 +107,7 @@ describe('View', function () {
     const eventBus = new EventBus();
     const type1 = "messageType1";
     const type2 = "messageType2";
-    new View(eventBus,
+    new View(eventBus, {},
       {
         'type': type1,
         'action': () => {
@@ -130,22 +130,16 @@ describe('View', function () {
     eventBus.publish(new Event(type2));
   });
   it("keeps state between calls", function (done) {
-    class CounterView extends View {
-      constructor(eventBus, ...listenedEventTypesAndActions) {
-        super(eventBus, ...listenedEventTypesAndActions);
-        this.counter = 0;
-      }
-    }
     const eventBus = new EventBus();
     const type1 = "messageType1";
-    new CounterView(eventBus,
-      {
+    new View(eventBus, {counter: 0}, {
         'type': type1,
-        'action': (message, view) => {
-          view.counter += 1;
-          if (view.counter == 3) {
+        'action': (message, state) => {
+          state.counter += 1;
+          if (state.counter == 3) {
             done();
           }
+          return state;
         }
       }
     );
@@ -154,16 +148,32 @@ describe('View', function () {
     eventBus.publish(new Event(type1));
   });
 
-  it("notify watchers after each event handling", function (done) {
-    class CounterView extends View {
-      constructor(eventBus, ...listenedEventTypesAndActions) {
-        super(eventBus, ...listenedEventTypesAndActions);
-        this.counter = 0;
-      }
-    }
+  it("keeps deep state between calls", function (done) {
     const eventBus = new EventBus();
     const type = "messageType";
-    const view = new CounterView(eventBus,
+    const view = new View(eventBus, {
+        deep: {
+          counter: 0
+        }
+      }, {
+        'type': type,
+        'action': (message, state) => {
+          state.deep.counter += 1;
+          return state;
+        }
+      }
+    );
+    view.watch(function (state) {
+      assert.equal(state.deep.counter, 1);
+      done();
+    });
+    eventBus.publish(new Event(type));
+  });
+
+  it("notify watchers after each event handling", function (done) {
+    const eventBus = new EventBus();
+    const type = "messageType";
+    const view = new View(eventBus, {counter: 0},
       {
         'type': type,
         'action': (message, view) => {
@@ -171,8 +181,8 @@ describe('View', function () {
         }
       }
     );
-    view.watch(function(){
-        done();
+    view.watch(function () {
+      done();
     });
     eventBus.publish(new Event(type));
   });

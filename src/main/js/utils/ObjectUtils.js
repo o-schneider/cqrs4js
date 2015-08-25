@@ -8,12 +8,14 @@ export class ObjectUtils {
   }
 
   static freezeDeep(obj) {
-    const propNames = Object.getOwnPropertyNames(obj);
-    propNames.forEach((name) => {
-      const prop = obj[name];
-      if (typeof prop == 'object' && !Object.isFrozen(prop))
-        ObjectUtils.freezeDeep(prop);
-    });
+    if(obj != null){
+      const propNames = Object.getOwnPropertyNames(obj);
+      propNames.forEach((name) => {
+        const prop = obj[name];
+        if (typeof prop == 'object' && !Object.isFrozen(prop))
+          ObjectUtils.freezeDeep(prop);
+      });
+    }
     return Object.freeze(obj);
   }
 }

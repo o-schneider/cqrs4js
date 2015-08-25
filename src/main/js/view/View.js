@@ -1,22 +1,20 @@
 'use strict';
 
+import {StateHolder} from "../state/StateHolder"
 import {EventEmitter} from 'events';
 import {check} from '../utils/check';
-import {ObjectUtils} from '../utils/ObjectUtils'
 import _ from 'lodash';
 
 const log = false;
 
-export class View {
+export class View extends StateHolder{
 
   constructor(eventBus, initialState, ...listenedEventTypesAndActions) {
+    super(listenedEventTypesAndActions);
     check.notNull({'eventBus': eventBus});
-    check.true("listenedEventTypesAndActions should contain at least one type and action", function () {
-      return listenedEventTypesAndActions != null && listenedEventTypesAndActions.length != 0;
-    });
 
     this.messageEmitter = new EventEmitter();
-    let state = ObjectUtils.freezeDeep(initialState);
+    let state = this.freeze(initialState);
 
     listenedEventTypesAndActions.forEach((actionAndType) => {
       const type = actionAndType.type;
@@ -29,7 +27,7 @@ export class View {
       });
 
       eventBus.subscribe(type, (event) => {
-        state = ObjectUtils.freezeDeep(action.call(null, event, _.cloneDeep(state)));
+        state = this.freeze((action.call(null, event,this.createMutableClone(state))));
         this.messageEmitter.emit('change', state)
       });
     });
@@ -37,7 +35,7 @@ export class View {
   }
 
   watch(cbk) {
-    this.messageEmitter.on('change', (state) => cbk.call(null, state) );
+    this.messageEmitter.on('change', (state) => cbk.call(null, state));
     return () => this.messageEmitter.removeListener('change', cbk);
   }
 }

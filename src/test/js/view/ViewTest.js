@@ -12,48 +12,6 @@ describe('View', function () {
     });
   });
 
-  it("throws when no listened event types provided", function () {
-    assert.throws(function () {
-      new View(new EventBus());
-    });
-  });
-
-  it("throws when given listenedEventTypesAndAction missing type", function () {
-    assert.throws(function () {
-      new View(new EventBus(),
-        {
-          'action': function () {
-          }
-        });
-    });
-  });
-  it("throws when given listenedEventTypesAndAction's type isn't a String", function () {
-    assert.throws(function () {
-      new View(new EventBus(),
-        {
-          type: ()=>true,
-          'action': function () {
-          }
-        });
-    });
-  });
-  it("throws when given listenedEventTypesAndAction missing action", function () {
-    assert.throws(function () {
-      new View(new EventBus(),
-        {
-          'type': "type"
-        });
-    });
-  });
-  it("throws when given listenedEventTypesAndAction's action isn't a function", function () {
-    assert.throws(function () {
-      new View(new EventBus(),
-        {
-          'type': 'type',
-          action: "wrongOne"
-        });
-    });
-  });
   it("subscribe given event type and action", function () {
     class FakeEventBus extends EventBus {
       constructor(collector) {

@@ -1,6 +1,6 @@
 'use strict';
 
-import {StateHolder} from '../../../main/js/state/StateHolder';
+import {StateHolder} from '../../../main/js/utils/initStateHolder';
 import assert from 'assert';
 
 

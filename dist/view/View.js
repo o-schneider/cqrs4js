@@ -58,7 +58,7 @@ var View = (function () {
       this.messageEmitter.emit('change');
     }
   }, {
-    key: 'watch',
+    key: 'subscribe',
     value: function watch(cbk) {
       var _this = this;
 

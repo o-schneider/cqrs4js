@@ -1,41 +1,52 @@
 'use strict';
 
-import {StateHolder} from "../state/StateHolder"
+import {initStateHolder} from "../utils/initStateHolder"
 import {EventEmitter} from 'events';
 import {check} from '../utils/check';
 import _ from 'lodash';
 
-const log = false;
+const log = true;
 
-export class View extends StateHolder{
+export const createView = (eventBus, initialState, ...listenedEventTypesAndActions) => {
+  const freeze = initStateHolder(listenedEventTypesAndActions);
+  check.notNull({'eventBus': eventBus});
 
-  constructor(eventBus, initialState, ...listenedEventTypesAndActions) {
-    super(listenedEventTypesAndActions);
-    check.notNull({'eventBus': eventBus});
+  const messageEmitter = new EventEmitter();
+  let state = freeze(initialState);
 
-    this.messageEmitter = new EventEmitter();
-    let state = this.freeze(initialState);
+  listenedEventTypesAndActions.forEach((actionAndType) => {
+    const type = actionAndType.type;
+    const action = actionAndType.action;
 
-    listenedEventTypesAndActions.forEach((actionAndType) => {
-      const type = actionAndType.type;
-      const action = actionAndType.action;
+    if (log) console.log('about to register type ' + type + " and action " + action);
 
-      if (log) console.log('about to register type ' + type + " and action " + action);
-
-      check.true("type and action both present", () => {
-        return typeof type === "string" && action instanceof Function
-      });
-
-      eventBus.subscribe(type, (event) => {
-        state = this.freeze((action.call(null, event,this.createMutableClone(state))));
-        this.messageEmitter.emit('change', state)
-      });
+    check.true("type and action both present", () => {
+      return typeof type === "string" && action instanceof Function
     });
 
-  }
+    eventBus.subscribe(type, (event) => {
+      state = freeze(action(event, state));
+      messageEmitter.emit('change', state)
+    });
+  });
 
-  watch(cbk) {
-    this.messageEmitter.on('change', (state) => cbk.call(null, state));
-    return () => this.messageEmitter.removeListener('change', cbk);
-  }
-}
+  messageEmitter.on('addSubscriber', (cbk) => {
+    if (log) {
+      console.log("about to subscribe '" + cbk + "'");
+    }
+    messageEmitter.on('change', cbk);
+    cbk(state);
+  });
+
+  return (cbk) => {
+    const effectiveCallback = (state) => cbk(state);
+    messageEmitter.emit('addSubscriber', effectiveCallback);
+    return (cb) => {
+      if (log) {
+        console.log("about to remove '" + effectiveCallback + "'");
+      }
+      messageEmitter.removeListener('change', effectiveCallback);
+      cb();
+    }
+  };
+};

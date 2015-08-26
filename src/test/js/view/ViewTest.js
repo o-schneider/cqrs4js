@@ -1,14 +1,15 @@
 'use strict';
 
-import {View} from '../../../main/js/view/View';
+import {createView} from '../../../main/js/view/View';
 import {EventBus} from '../../../main/js/event/EventBus';
 import {Event} from '../../../main/js/event/Event';
 import assert from 'assert';
+import should from 'should';
 
 describe('View', function () {
   it("throws when no event bus provided", function () {
     assert.throws(function () {
-      new View(null, "");
+      createView(null, "");
     });
   });
 
@@ -25,7 +26,7 @@ describe('View', function () {
     }
     const collector = new Array();
     const fakeEventBus = new FakeEventBus(collector);
-    new View(fakeEventBus, {},
+    createView(fakeEventBus, {},
       {
         'type': 'eventType1',
         'action': function () {
@@ -46,7 +47,7 @@ describe('View', function () {
     }
     const collector = [];
     const fakeEventBus = new FakeEventBus(collector);
-    new View(fakeEventBus, {},
+    createView(fakeEventBus, {},
       {
         'type': 'eventType1',
         'action': function () {
@@ -65,7 +66,7 @@ describe('View', function () {
     const eventBus = new EventBus();
     const type1 = "messageType1";
     const type2 = "messageType2";
-    new View(eventBus, {},
+    createView(eventBus, {},
       {
         'type': type1,
         'action': () => {
@@ -90,14 +91,14 @@ describe('View', function () {
   it("keeps state between calls", function (done) {
     const eventBus = new EventBus();
     const type1 = "messageType1";
-    new View(eventBus, {counter: 0}, {
+    createView(eventBus, 0, {
         'type': type1,
-        'action': (message, state) => {
-          state.counter += 1;
-          if (state.counter == 3) {
+        'action': (message, counter) => {
+          const newCounter = counter + 1;
+          if (newCounter == 3) {
             done();
           }
-          return state;
+          return newCounter;
         }
       }
     );
@@ -106,42 +107,67 @@ describe('View', function () {
     eventBus.publish(new Event(type1));
   });
 
-  it("keeps deep state between calls", function (done) {
+  it("notify subscribers provides state on subscription", function (done) {
     const eventBus = new EventBus();
     const type = "messageType";
-    const view = new View(eventBus, {
-        deep: {
-          counter: 0
-        }
-      }, {
-        'type': type,
-        'action': (message, state) => {
-          state.deep.counter += 1;
-          return state;
-        }
-      }
-    );
-    view.watch(function (state) {
-      assert.equal(state.deep.counter, 1);
-      done();
-    });
-    eventBus.publish(new Event(type));
-  });
-
-  it("notify watchers after each event handling", function (done) {
-    const eventBus = new EventBus();
-    const type = "messageType";
-    const view = new View(eventBus, {counter: 0},
+    const expectedState = 2;
+    const subscribe = createView(eventBus, expectedState,
       {
         'type': type,
-        'action': (message, view) => {
-          view.counter += 1;
+        'action': () => {
         }
       }
     );
-    view.watch(function () {
+    subscribe(function (state) {
+      should.equal(state, expectedState);
       done();
     });
+  });
+
+
+  it("notify subscribers after each event handling", function (done) {
+    const eventBus = new EventBus();
+    const type = "messageType";
+    const expected = "1";
+    const subscribe = createView(eventBus, 0,
+      {
+        'type': type,
+        'action': () => {
+          return expected;
+        }
+      }
+    );
+    subscribe(function (state) {
+      if (state === expected) {
+        done();
+      }
+    });
     eventBus.publish(new Event(type));
+  });
+
+  it("unsubscribe", function (done) {
+    const eventBus = new EventBus();
+    const type = "messageType";
+    const unexpected = "wrong";
+    const subscribe = createView(eventBus, 0,
+      {
+        'type': type,
+        'action': () => {
+          return unexpected;
+        }
+      }
+    );
+    let called = 0;
+    const unsubscribe = subscribe(() => {
+      called += 1;
+    });
+    unsubscribe(() => {
+      eventBus.publish(new Event(type));
+      setTimeout(() => {
+        if (called === 1) {
+          done();
+        }
+      }, 10);
+    });
   });
 });

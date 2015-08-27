@@ -8,7 +8,7 @@ import _ from 'lodash';
 const log = false;
 
 export const createModel = (commandBus, eventBus, initialState, ...listenedCommandsTypesAndActions) => {
-  const freeze = initStateHolder(listenedEventTypesAndActions);
+  const freeze = initStateHolder(listenedCommandsTypesAndActions);
   check.notNull({'commandBus': commandBus}, {'eventBus': eventBus});
 
   const messageEmitter = new EventEmitter();
@@ -21,8 +21,8 @@ export const createModel = (commandBus, eventBus, initialState, ...listenedComma
     if (log) console.log('about to register command type ' + commandType + " and action " + action);
 
     commandBus.subscribe(commandType, (command) => {
-      state = freeze(action.call(null, command, state, eventBus));
+      state = freeze(action(command, state, eventBus));
     });
   });
 
-}
+};

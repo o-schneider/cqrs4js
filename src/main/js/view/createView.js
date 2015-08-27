@@ -25,8 +25,13 @@ export const createView = (eventBus, initialState, ...listenedEventTypesAndActio
     });
 
     eventBus.subscribe(type, (event) => {
-      state = freeze(action(event, state));
-      messageEmitter.emit('change', state)
+      const newState = freeze(action(event, state));
+      if (newState !== state) {
+        state = newState;
+        messageEmitter.emit('change', state);
+      } else if (log) {
+        console.log("No change detected. Previous state '", state, "', new state '", newState,"'");
+      }
     });
   });
 

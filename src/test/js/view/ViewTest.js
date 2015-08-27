@@ -1,6 +1,6 @@
 'use strict';
 
-import {createView} from '../../../main/js/view/View';
+import {createView} from '../../../main/js/view/createView';
 import {EventBus} from '../../../main/js/event/EventBus';
 import {Event} from '../../../main/js/event/Event';
 import assert from 'assert';
@@ -60,8 +60,7 @@ describe('View', function () {
     );
     assert.equal(2, collector.length);
   });
-
-  it("register actions for given even types", function (done) {
+  it("register actions for given event types", function (done) {
     let counter = 0;
     const eventBus = new EventBus();
     const type1 = "messageType1";
@@ -144,6 +143,32 @@ describe('View', function () {
     });
     eventBus.publish(new Event(type));
   });
+
+  it("doesn't notify subscribers when no state change is done", function (done) {
+    const eventBus = new EventBus();
+    const type = "messageType";
+    const firstPayload = "1";
+    const subscribe = createView(eventBus, firstPayload,
+      {
+        'type': type,
+        'action': (event) => {
+          return event.payload;
+        }
+      }
+    );
+    const secondPayload = "2";
+    let counter = 0;
+    subscribe(function (state) {
+      counter++;
+      if (state === secondPayload && counter == 2) {
+        done();
+      }
+    });
+    eventBus.publish(new Event(type, firstPayload));
+    eventBus.publish(new Event(type, firstPayload));
+    eventBus.publish(new Event(type, secondPayload));
+  });
+
 
   it("unsubscribe", function (done) {
     const eventBus = new EventBus();

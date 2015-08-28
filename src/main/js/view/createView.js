@@ -5,7 +5,7 @@ import {EventEmitter} from 'events';
 import {check} from '../utils/check';
 import _ from 'lodash';
 
-const log = true;
+const log = false;
 
 export const createView = (eventBus, initialState, ...listenedEventTypesAndActions) => {
   const freeze = initStateHolder(listenedEventTypesAndActions);
@@ -20,17 +20,13 @@ export const createView = (eventBus, initialState, ...listenedEventTypesAndActio
 
     if (log) console.log('about to register type ' + type + " and action " + action);
 
-    check.true("type and action both present", () => {
-      return typeof type === "string" && action instanceof Function
-    });
-
     eventBus.subscribe(type, (event) => {
       const newState = freeze(action(event, state));
       if (newState !== state) {
         state = newState;
         messageEmitter.emit('change', state);
       } else if (log) {
-        console.log("No change detected. Previous state '", state, "', new state '", newState,"'");
+        console.log("No change detected. Previous state '", state, "', new state '", newState, "'");
       }
     });
   });

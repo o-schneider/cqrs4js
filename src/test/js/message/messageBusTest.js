@@ -8,7 +8,7 @@ import assert from 'assert';
 describe('MessageBus publishing', function () {
   const messageBus = new MessageBus();
   it("handles messages", function () {
-    messageBus.publish(new Message("type", "payload"));
+    messageBus.publish(new Message("name", "payload"));
   });
 
   it("handles message's subclass", function () {
@@ -34,11 +34,11 @@ describe('MessageBus publishing', function () {
   });
 
   it("effectively emits messages", function (done) {
-    const messageType = "messageType";
-    messageBus.subscribe(messageType, (a) => {
+    const messageName = "message";
+    messageBus.subscribe(messageName, (a) => {
       done();
     });
-    messageBus.publish(new Message(messageType, "payload"));
+    messageBus.publish(new Message(messageName, "payload"));
   });
 
 });

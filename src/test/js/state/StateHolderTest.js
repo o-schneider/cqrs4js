@@ -6,13 +6,13 @@ import assert from 'assert';
 
 describe('StateHolder', function () {
 
-  it("throws when no listened event types provided", function () {
+  it("throws when no listened event names provided", function () {
     assert.throws(function () {
       new StateHolder();
     });
   });
 
-  it("throws when given listenedEventTypesAndAction missing type", function () {
+  it("throws when given listenedEventNamesAndAction missing name", function () {
     assert.throws(function () {
       new StateHolder(
         {
@@ -21,29 +21,29 @@ describe('StateHolder', function () {
         });
     });
   });
-  it("throws when given listenedEventTypesAndAction's type isn't a String", function () {
+  it("throws when given listenedEventNamesAndAction's name isn't a String", function () {
     assert.throws(function () {
       new StateHolder(
         {
-          type: ()=>true,
+          name: ()=>true,
           'action': function () {
           }
         });
     });
   });
-  it("throws when given listenedEventTypesAndAction missing action", function () {
+  it("throws when given listenedEventNamesAndAction missing action", function () {
     assert.throws(function () {
       new StateHolder(
         {
-          'type': "type"
+          "name": "name"
         });
     });
   });
-  it("throws when given listenedEventTypesAndAction's action isn't a function", function () {
+  it("throws when given listenedEventNamesAndAction's action isn't a function", function () {
     assert.throws(function () {
       new StateHolder(
         {
-          'type': 'type',
+          "name": 'name',
           action: "wrongOne"
         });
     });

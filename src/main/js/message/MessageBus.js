@@ -12,19 +12,19 @@ export class MessageBus {
 
   publish(message) {
     this.checkPublish(message);
-    if (log) console.log("publish type of '" + message.type + "' with payload '" + message.payload + "'");
-    this.messageEmitter.emit(message.type, message);
+    if (log) console.log("publish '" + message.name + "' with payload '" + message.payload + "'");
+    this.messageEmitter.emit(message.name, message);
     return;
   }
 
-  subscribe(messageType, callback) {
-    if (log) console.log("subscribe to type '" + messageType + "' by callback '" + callback + "'");
-    this.checkSubscribe(messageType, callback);
-    this.messageEmitter.on(messageType, callback);
+  subscribe(messageName, callback) {
+    if (log) console.log("subscribe to name '" + messageName + "' by callback '" + callback + "'");
+    this.checkSubscribe(messageName, callback);
+    this.messageEmitter.on(messageName, callback);
     return;
   }
 
-  checkSubscribe(messageType, callback) {
+  checkSubscribe() {
   }
 
   checkPublish(message) {

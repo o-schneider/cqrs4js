@@ -21,22 +21,22 @@ describe('Model', function () {
     });
   });
 
-  it("subscribe given event type and action", function () {
+  it("subscribe given event name and action", function () {
     class FakeCommandBus extends CommandBus {
       constructor(collector) {
         super();
         this.collector = collector;
       }
 
-      subscribe(messageType, callback) {
-        this.collector.push({messageType, callback});
+      subscribe(messageName, callback) {
+        this.collector.push({messageName, callback});
       }
     }
     const collector = new Array();
     const fakeCommandBus = new FakeCommandBus(collector);
     createModel(fakeCommandBus, new EventBus(), {},
       {
-        'type': 'eventType1',
+        'name': 'eventName1',
         'action': function () {
         }
       });
@@ -47,11 +47,11 @@ describe('Model', function () {
     let counter = 0;
     const commandBus = new CommandBus();
     const eventBus = new EventBus();
-    const type1 = "messageType1";
-    const type2 = "messageType2";
+    const name1 = "messageName1";
+    const name2 = "messageName2";
     createModel(commandBus, eventBus, {},
       {
-        'type': type1,
+        'name': name1,
         'action': () => {
           counter += 1;
           if (counter == 3) {
@@ -59,7 +59,7 @@ describe('Model', function () {
           }
         }
       }, {
-        'type': type2,
+        'name': name2,
         'action': () => {
           counter += 2;
           if (counter == 3) {
@@ -68,16 +68,16 @@ describe('Model', function () {
         }
       }
     );
-    commandBus.publish(new Command(type1));
-    commandBus.publish(new Command(type2));
+    commandBus.publish(new Command(name1));
+    commandBus.publish(new Command(name2));
   });
 
   it("keeps state between calls", function (done) {
     const commandBus = new CommandBus();
     const eventBus = new EventBus();
-    const type1 = "messageType1";
+    const name1 = "messageName1";
     createModel(commandBus,eventBus, 0, {
-        'type': type1,
+        'name': name1,
         'action': (message, counter) => {
           const newCounter = counter + 1;
           if (newCounter == 3) {
@@ -87,9 +87,9 @@ describe('Model', function () {
         }
       }
     );
-    commandBus.publish(new Command(type1));
-    commandBus.publish(new Command(type1));
-    commandBus.publish(new Command(type1));
+    commandBus.publish(new Command(name1));
+    commandBus.publish(new Command(name1));
+    commandBus.publish(new Command(name1));
   });
 
 });

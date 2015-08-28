@@ -29,18 +29,18 @@ var View = (function () {
     _classCallCheck(this, View);
 
     _checkCheck.check.notNull({ 'eventBus': eventBus });
-    _checkCheck.check['true']("listenedEventTypesAndActions should contain at least one type and action", function () {
+    _checkCheck.check['true']("listenedEventTypesAndActions should contain at least one name and action", function () {
       return listenedEventTypesAndActions != null && listenedEventTypesAndActions.length != 0;
     });
 
     var view = this;
     _lodash2['default'].forEach(listenedEventTypesAndActions, function (actionAndType) {
-      var type = actionAndType.type;
+      var type = actionAndType.name;
       var action = actionAndType.action;
 
-      if (log) console.log('about to register type ' + type + " and action " + action);
+      if (log) console.log('about to register name ' + type + " and action " + action);
 
-      _checkCheck.check['true']("type and action both present", function () {
+      _checkCheck.check['true']("name and action both present", function () {
         return typeof type === "string" && action instanceof Function;
       });
 

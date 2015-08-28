@@ -7,20 +7,20 @@ import _ from 'lodash';
 
 const log = false;
 
-export const createView = (eventBus, initialState, ...listenedEventTypesAndActions) => {
-  const freeze = initStateHolder(listenedEventTypesAndActions);
+export const createView = (eventBus, initialState, ...listenedEventNamesAndActions) => {
+  const freeze = initStateHolder(listenedEventNamesAndActions);
   check.notNull({'eventBus': eventBus});
 
   const messageEmitter = new EventEmitter();
   let state = freeze(initialState);
 
-  listenedEventTypesAndActions.forEach((actionAndType) => {
-    const type = actionAndType.type;
-    const action = actionAndType.action;
+  listenedEventNamesAndActions.forEach((actionAndName) => {
+    const name = actionAndName.name;
+    const action = actionAndName.action;
 
-    if (log) console.log('about to register type ' + type + " and action " + action);
+    if (log) console.log('about to register name ' + name + " and action " + action);
 
-    eventBus.subscribe(type, (event) => {
+    eventBus.subscribe(name, (event) => {
       const newState = freeze(action(event, state));
       if (newState !== state) {
         state = newState;

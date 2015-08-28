@@ -9,7 +9,7 @@ export class ObjectUtils {
   }
 
   static freezeDeep(obj) {
-    if(obj != null){
+    if (obj != null) {
       const propNames = Object.getOwnPropertyNames(obj);
       propNames.forEach((name) => {
         const prop = obj[name];
@@ -20,7 +20,16 @@ export class ObjectUtils {
     return Object.freeze(obj);
   }
 
-  static createMutableClone(state){
+  static createMutableClone(state) {
     return _.cloneDeep(state);
   }
+
+  static toString(message) {
+    if (message instanceof Function) {
+      return message();
+    } else {
+      return message;
+    }
+  }
+
 }

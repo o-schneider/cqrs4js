@@ -3,7 +3,7 @@
 import should from 'should';
 import {ObjectUtils} from '../../../main/js/utils/ObjectUtils';
 
-describe('ObjectUtil freeze', () => {
+describe('ObjectUtils freeze', () => {
   it("handles null", () => {
     const obj = null;
     const frozenObj = ObjectUtils.freeze(obj);
@@ -27,7 +27,7 @@ describe('ObjectUtil freeze', () => {
   });
 });
 
-describe('ObjectUtil freezeDeep', () => {
+describe('ObjectUtils freezeDeep', () => {
 
   it("handles null", () => {
     const obj = null;
@@ -54,4 +54,33 @@ describe('ObjectUtil freezeDeep', () => {
     const frozenObj = ObjectUtils.freezeDeep(obj);
     should.exist(ObjectUtils.freezeDeep(frozenObj));
   });
+});
+
+describe('ObjectUtils toString', () => {
+  it("handles null", () => {
+    const obj = null;
+    const string = ObjectUtils.toString(obj);
+    should.not.exist(string);
+  });
+
+  it("handles string", () => {
+    const string = ObjectUtils.toString("string");
+    should.exist(string);
+  });
+
+  it("handles function", () => {
+    const result = "result";
+    const stringFunction = () => {
+      return result;
+    };
+    const string = ObjectUtils.toString(stringFunction);
+    should.equal(string, result);
+  });
+
+  it("handles object", () => {
+    const object = {foo: 'nar'};
+    const string = ObjectUtils.toString(object);
+    should.equal(string, object);
+  });
+
 });

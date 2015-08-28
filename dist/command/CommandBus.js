@@ -32,10 +32,10 @@ var CommandBus = (function (_MessageBus) {
       if (!(command instanceof _Command.Command)) {
         throw new Error("Publish works only on commands");
       }
-      var type = command.type;
+      var type = command.name;
       var listeners = this.getListeners(type);
       if (listeners.length == 0) {
-        throw new Error("No subscriber for command type '" + type + "'");
+        throw new Error("No subscriber for command name '" + type + "'");
       }
     }
   }, {
@@ -50,10 +50,10 @@ var CommandBus = (function (_MessageBus) {
       var listeners = this.getListeners(messageType);
       var length = listeners.length;
       if (length == 1) {
-        throw new Error("Subscriber already present  for command type '" + messageType + "': '" + listeners[0] + "'");
+        throw new Error("Subscriber already present  for command name '" + messageType + "': '" + listeners[0] + "'");
       }
       if (length > 1) {
-        throw new Error("Unexpected state: '" + length + "' subscribers for type '" + messageType + "', here be dragons ! Subscribers: " + listeners);
+        throw new Error("Unexpected state: '" + length + "' subscribers for name '" + messageType + "', here be dragons ! Subscribers: " + listeners);
       }
     }
   }]);

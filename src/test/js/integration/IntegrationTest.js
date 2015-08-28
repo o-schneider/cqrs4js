@@ -15,7 +15,7 @@ describe('CQRS and ES from end to end ', function () {
   let commandBus = new CommandBus();
   let eventBus = new EventBus();
   createModel(commandBus, eventBus, [], {
-    'type': "addUser",
+    'name': "addUser",
     'action': (command, state, eventBus) => {
       const userToAdd = command.payload;
       var login = userToAdd.login;
@@ -32,7 +32,7 @@ describe('CQRS and ES from end to end ', function () {
     }
   });
   const userViewSubscriber = createView(eventBus, [], {
-    'type': "userAdded",
+    'name': "userAdded",
     'action': (event, state) => {
       const newState = ObjectUtils.createMutableClone(state);
       newState.push(event.payload);

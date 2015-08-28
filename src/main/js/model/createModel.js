@@ -1,26 +1,23 @@
 'use strict';
 
 import {initStateHolder} from "../utils/initStateHolder";
-import {EventEmitter} from 'events';
 import {check} from '../utils/check';
-import _ from 'lodash';
 
 const log = false;
 
-export const createModel = (commandBus, eventBus, initialState, ...listenedCommandsTypesAndActions) => {
-  const freeze = initStateHolder(listenedCommandsTypesAndActions);
+export const createModel = (commandBus, eventBus, initialState, ...listenedCommandsNamesAndActions) => {
+  const freeze = initStateHolder(listenedCommandsNamesAndActions);
   check.notNull({'commandBus': commandBus}, {'eventBus': eventBus});
 
-  const messageEmitter = new EventEmitter();
   let state = freeze(initialState);
 
-  listenedCommandsTypesAndActions.forEach((actionAndType) => {
-    const commandType = actionAndType.type;
-    const action = actionAndType.action;
+  listenedCommandsNamesAndActions.forEach((actionAndName) => {
+    const commandName = actionAndName.name;
+    const action = actionAndName.action;
 
-    if (log) console.log('about to register command type ' + commandType + " and action " + action);
+    if (log) console.log('about to register command name ' + commandName + " and action " + action);
 
-    commandBus.subscribe(commandType, (command) => {
+    commandBus.subscribe(commandName, (command) => {
       state = freeze(action(command, state, eventBus));
     });
   });

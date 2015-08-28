@@ -25,14 +25,14 @@ var MessageBus = (function () {
     key: 'publish',
     value: function publish(message) {
       this.checkPublish(message);
-      if (log) console.log("publish type of '" + message.type + "' with payload '" + message.payload + "'");
-      this.messageEmitter.emit(message.type, message);
+      if (log) console.log("publish name of '" + message.name + "' with payload '" + message.payload + "'");
+      this.messageEmitter.emit(message.name, message);
       return;
     }
   }, {
     key: 'subscribe',
     value: function subscribe(messageType, callback) {
-      if (log) console.log("subscribe to type '" + messageType + "' by callback '" + callback + "'");
+      if (log) console.log("subscribe to name '" + messageType + "' by callback '" + callback + "'");
       this.checkSubscribe(messageType, callback);
       this.messageEmitter.on(messageType, callback);
       return;

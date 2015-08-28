@@ -17,16 +17,16 @@ var _checkCheck = require('../check/check');
 // The Message class freezes all its attributes in the constructor: no other attribute can be added and current ones can have their value modified.
 // Mind though that Object.freeze don't throw exception when trying to set a value, the new value is silently ignored. It throws a TypeError when trying to add new attributes.
 //
-// The type is mandatory.
+// The name is mandatory.
 //
 // Message's subclasses must wrap their own attributes in the payload and define getters.
 
 var Message = function Message(type, payloadOrNull) {
   _classCallCheck(this, Message);
 
-  _checkCheck.check.notNull({ 'type': type });
+  _checkCheck.check.notNull({ "name": type });
   this.uuid = _nodeUuid2['default'].v4(); // TODO : check generation time
-  this.type = type;
+  this.name = type;
   this.payload = payloadOrNull;
   Object.freeze(this);
 };

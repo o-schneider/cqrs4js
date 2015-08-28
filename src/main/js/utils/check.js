@@ -1,8 +1,10 @@
 'use strict';
 
 import _ from "lodash";
+import {ObjectUtils} from "./ObjectUtils"
 
 class Check {
+
   notNull(parameters) {
     if (parameters == null) {
       throw new Error("Null object parameters given ");
@@ -11,7 +13,7 @@ class Check {
         return n == null;
       })) {
       var result = _.reduce(parameters, function (result, n, key) {
-        const currentValue = key + "/" + n;
+        const currentValue = ObjectUtils.toString(key) + "/" + n;
         if (typeof(result) === 'string') {
           result = result + ", " + currentValue;
         } else {
@@ -25,10 +27,12 @@ class Check {
 
   true(description, truthyFunction) {
     this.notNull({'description': description, 'truthyFunction': truthyFunction});
-    if(truthyFunction() == false){
-      throw new Error(description + " not true");
+    if (truthyFunction() == false) {
+      console.log("about to massage '" + description + "'");
+      throw new Error(ObjectUtils.toString(description));
     }
   }
+
 }
 
 export const check = new Check();

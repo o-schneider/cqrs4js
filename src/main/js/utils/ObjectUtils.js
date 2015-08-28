@@ -1,6 +1,7 @@
 'use strict';
 
 import {check} from './check'
+import _ from 'lodash';
 
 export class ObjectUtils {
   static freeze(obj) {
@@ -17,5 +18,9 @@ export class ObjectUtils {
       });
     }
     return Object.freeze(obj);
+  }
+
+  static createMutableClone(state){
+    return _.cloneDeep(state);
   }
 }

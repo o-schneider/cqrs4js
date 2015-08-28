@@ -29,7 +29,7 @@ export class CommandBus extends MessageBus {
       throw new Error("Subscriber already present  for command type '" + messageType + "': '" + listeners[0] + "'");
     }
     if (length > 1) {
-      throw new Error("Unexpected state: '" + length + "' subscribers for type '" + messageType + "', here be dragons ! Subscribers: " + listeners);
+      throw new Error("Unexpected state: '" + length + "' subscribers for type '" + messageType + "', here be dragons! Subscribers: " + listeners);
     }
   }
 

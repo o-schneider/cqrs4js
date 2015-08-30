@@ -24,7 +24,7 @@ A proof of concept cqrs implementation in JavaScript
 1. [Disclaimer](#disclaimer)
  
 # <a name="example"></a>Code example
-<pre><code>
+```javascript
     let commandBus = new CommandBus();
     let eventBus = new EventBus();
 
@@ -68,7 +68,7 @@ A proof of concept cqrs implementation in JavaScript
     commandBus.publish(new Command("addUser", {login: 'foo'}));
 
     console.log(users.length, " user(s) created");
-</code></pre>
+```
 
 # <a name="overview"></a>Overview
 

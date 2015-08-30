@@ -28,7 +28,6 @@ class Check {
   true(description, truthyFunction) {
     this.notNull({'description': description, 'truthyFunction': truthyFunction});
     if (truthyFunction() == false) {
-      console.log("about to massage '" + description + "'");
       throw new Error(ObjectUtils.toString(description));
     }
   }

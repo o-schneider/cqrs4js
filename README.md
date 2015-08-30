@@ -3,24 +3,70 @@
 A proof of concept cqrs implementation in JavaScript
 
 # content
-1. Code example - TODO when code more stable
+1. [Code example](#example)
 1. [Overview](#overview)
- 1. [Concepts](#concepts)
-  1. [Commands](#commands)
-  1. [Models](#models)
-  1. [Events](#events)
-  1. [Views](#views)
- 1. [Command bus and event bus](#bus)
- 1. [Workflow](#workflow)
-  1. [Truly unidirectional](#unidirectional)
-  2. [Example](#workflow-example)
- 2. [Implementation choices](#impl-choices)
-  1. [Right rather than fast](#right)
-  1. [Asynchronous](#asynchronous)
-  1. [Immutability](#immutability)
+  1. [Concepts](#concepts)
+    1. [Commands](#commands)
+    1. [Models](#models)
+    1. [Events](#events)
+    1. [Views](#views)
+  1. [Command bus and event bus](#bus)
+  1. [Workflow](#workflow)
+    1. [Truly unidirectional](#unidirectional)
+    2. [Example](#workflow-example)
+  2. [Implementation choices](#impl-choices)
+    1. [Right rather than fast](#right)
+    1. [Asynchronous](#asynchronous)
+    1. [Immutability](#immutability)
 1. [Why cqrs4js?](#why)
 1. [Disclaimer](#disclaimer)
  
+# <a name="example"></a>Code example
+<pre><code>
+    let commandBus = new CommandBus();
+    let eventBus = new EventBus();
+
+    //the model responsible for handling addUser commands
+    createModel(commandBus, eventBus, [], {
+      'name': "addUser",
+      'action': (command, state, eventBus) => {
+        const userToAdd = command.payload;
+        var login = userToAdd.login;
+        if (_.find(state, (chr) => {
+            return chr === login;
+          })) {
+          eventBus.publish(new Event("addUserFailure", {'message': "Login already existing", 'command': command}));
+          return state;
+        }
+        const newState = ObjectUtils.createMutableClone(state);
+        newState.push(login);
+        eventBus.publish(new Event("userAdded", {command}));
+        return newState;
+      }
+    });
+
+    //createView returns a function allowing to subscribe to the new view
+    const userViewSubscriber = createView(eventBus, [], {
+      'name': "userAdded",
+      'action': (event, state) => {
+        const newState = ObjectUtils.createMutableClone(state);
+        newState.push(event.payload);
+        return newState;
+      }
+    });
+
+    var users = {};
+    //when subscribing one is given the state of the view
+    userViewSubscriber(function (state) {
+      users = state;
+    });
+
+    commandBus.publish(new Command("addUser", {login: 'foo'}));
+    //this second command trigger an addUserFailure event
+    commandBus.publish(new Command("addUser", {login: 'foo'}));
+
+    console.log(users.length, " user(s) created");
+</code></pre>
 
 # <a name="overview"></a>Overview
 

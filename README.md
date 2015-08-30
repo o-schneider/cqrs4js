@@ -1,3 +1,5 @@
+[![](https://travis-ci.org/HeroesDesk/cqrs4js.svg?branch=master)](https://travis-ci.org/HeroesDesk/cqrs4js?branch=master) 
+
 # cqrs4js
 
 A proof of concept cqrs implementation in JavaScript

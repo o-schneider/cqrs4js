@@ -26,6 +26,11 @@ var EventBus = (function (_MessageBus) {
   }
 
   _createClass(EventBus, [{
+    key: 'publish',
+    value: function publish(event) {
+      _get(Object.getPrototypeOf(EventBus.prototype), 'publish', this).call(this, event);
+    }
+  }, {
     key: 'checkPublish',
     value: function checkPublish(event) {
       _get(Object.getPrototypeOf(EventBus.prototype), 'checkPublish', this).call(this, event);

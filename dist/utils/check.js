@@ -14,6 +14,8 @@ var _lodash = require("lodash");
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
+var _ObjectUtils = require("./ObjectUtils");
+
 var Check = (function () {
   function Check() {
     _classCallCheck(this, Check);
@@ -29,7 +31,7 @@ var Check = (function () {
         return n == null;
       })) {
         var result = _lodash2["default"].reduce(parameters, function (result, n, key) {
-          var currentValue = key + "/" + n;
+          var currentValue = _ObjectUtils.ObjectUtils.toString(key) + "/" + n;
           if (typeof result === 'string') {
             result = result + ", " + currentValue;
           } else {
@@ -45,7 +47,7 @@ var Check = (function () {
     value: function _true(description, truthyFunction) {
       this.notNull({ 'description': description, 'truthyFunction': truthyFunction });
       if (truthyFunction() == false) {
-        throw new Error(description + " not true");
+        throw new Error(_ObjectUtils.ObjectUtils.toString(description));
       }
     }
   }]);

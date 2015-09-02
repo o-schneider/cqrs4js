@@ -26,34 +26,39 @@ var CommandBus = (function (_MessageBus) {
   }
 
   _createClass(CommandBus, [{
+    key: 'publish',
+    value: function publish(command) {
+      _get(Object.getPrototypeOf(CommandBus.prototype), 'publish', this).call(this, command);
+    }
+  }, {
     key: 'checkPublish',
     value: function checkPublish(command) {
       _get(Object.getPrototypeOf(CommandBus.prototype), 'checkPublish', this).call(this, command);
       if (!(command instanceof _Command.Command)) {
         throw new Error("Publish works only on commands");
       }
-      var type = command.name;
-      var listeners = this.getListeners(type);
+      var name = command.name;
+      var listeners = this.getListeners(name);
       if (listeners.length == 0) {
-        throw new Error("No subscriber for command name '" + type + "'");
+        throw new Error("No subscriber for '" + name + "'");
       }
     }
   }, {
     key: 'getListeners',
-    value: function getListeners(type) {
-      return this.messageEmitter.listeners(type);
+    value: function getListeners(name) {
+      return this.messageEmitter.listeners(name);
     }
   }, {
     key: 'checkSubscribe',
-    value: function checkSubscribe(messageType, callback) {
-      _get(Object.getPrototypeOf(CommandBus.prototype), 'checkSubscribe', this).call(this, messageType, callback);
-      var listeners = this.getListeners(messageType);
+    value: function checkSubscribe(commandName, callback) {
+      _get(Object.getPrototypeOf(CommandBus.prototype), 'checkSubscribe', this).call(this, commandName, callback);
+      var listeners = this.getListeners(commandName);
       var length = listeners.length;
       if (length == 1) {
-        throw new Error("Subscriber already present  for command name '" + messageType + "': '" + listeners[0] + "'");
+        throw new Error("Subscriber already present  for '" + commandName + "': '" + listeners[0] + "'");
       }
       if (length > 1) {
-        throw new Error("Unexpected state: '" + length + "' subscribers for name '" + messageType + "', here be dragons ! Subscribers: " + listeners);
+        throw new Error("Unexpected state: '" + length + "' subscribers for '" + commandName + "', here be dragons! Subscribers: " + listeners);
       }
     }
   }]);

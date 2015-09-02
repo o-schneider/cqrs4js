@@ -58,21 +58,21 @@ Object.defineProperty(exports, "EventBus", {
   }
 });
 
-var _viewViewJs = require("./view/View.js");
+var _viewCreateViewJs = require("./view/createView.js");
 
 Object.defineProperty(exports, "View", {
   enumerable: true,
   get: function get() {
-    return _viewViewJs.View;
+    return _viewCreateViewJs.View;
   }
 });
 
-var _checkCheckJs = require("./check/check.js");
+var _utilsCheckJs = require("./utils/check.js");
 
 Object.defineProperty(exports, "check", {
   enumerable: true,
   get: function get() {
-    return _checkCheckJs.check;
+    return _utilsCheckJs.check;
   }
 });
 //# sourceMappingURL=cqrs4js.js.map
